@@ -26,21 +26,26 @@ class Grader:
                     100: Perfect—fully meets all criteria and the original prompt's requirements.
                     0: Completely unsatisfactory—fails to meet the prompt’s requirements.
             ###OUTPUT:
-                Return the grade as a single number (0-100) in JSON format, with no additional text, explanation, or commentary. Use the following format:
-                    {
-                    "grade": <number>
-                    }
+            Return the grade as a single number (0-100) in JSON format, with no additional text, explanation, or commentary. Use the following format:
+            
+                "grade": <number>
+            
             """
         )
         
         chain_extract = prompt | self.llm
-        res = chain_extract.invoke(input={"result": result,
-                                          "original_prompt": original_prompt})
-        print("Raw response content:", res.content)  # Log the raw response
         try:
-            json_parser = JsonOutputParser()
-            res = json_parser.parse(res.content)
+            res = chain_extract.invoke(input={"result": result, "original_prompt": original_prompt})
+            print("Raw response content:", res.content)  # Log the raw response
+            if res.content.startswith("{") and res.content.endswith("}"):
+                json_parser = JsonOutputParser()
+                res = json_parser.parse(res.content)
+            else:
+                raise ValueError("Response is not in valid JSON format.")
         except OutputParserException as e:
             print("Parsing error:", str(e))  # Log parsing errors
             raise
-        return res if isinstance(res, list) else [res]
+        except Exception as e:
+            print("General error:", str(e))  # Catch other errors (e.g., network issues)
+            raise
+        return res
