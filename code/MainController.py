@@ -13,10 +13,13 @@ from fastapi.responses import FileResponse
 from moviepy.editor import VideoFileClip
 from typing import Optional
 from fastapi import BackgroundTasks
+from PromptValidator import ValidatePrompt
+
 
 app = FastAPI()
 note_generator = GenerateNote()
 grader = Grader()
+validator=ValidatePrompt()
 
 class NoteResponse(BaseModel):
     lecture_title: str
@@ -42,7 +45,7 @@ STATIC_YEAR = "1st year undergraduate"
 STATIC_FIELD_OF_STUDY = "Physics"
 STATIC_MODULE = "Mechanics101"
 STATIC_NOTES_STYLE = "bullet points"
-STATIC_ORIGINAL_PROMPT = "Generate Notes for text uploaded,"
+STATIC_ORIGINAL_PROMPT = "generate notes"
 
 @app.get("/")
 def read_root():
@@ -73,8 +76,11 @@ async def generate_notes():
         result=notes,
         original_prompt=STATIC_ORIGINAL_PROMPT
     )
-    
     print("Score: ", res2)
     
+    res3=validator.validate(STATIC_ORIGINAL_PROMPT)
+    ##just to try the res3 of validator:
+    json_boolean = json.dumps({"boolean_value":res3})
+    print("Validate Prompt: ",json_boolean)
     
-    return res1,res2
+    return res1,res2,json_boolean
