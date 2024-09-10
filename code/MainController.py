@@ -36,7 +36,7 @@ async def extract_audio_from_video(
     video: UploadFile = File(...),
     output_format: str = "mp3",
     start_time: Optional[float] = None,
-    duration: Optional[float] = None
+    duration: Optional[float] = None,
 ):
     """
     Extract audio from a video file.
@@ -83,7 +83,9 @@ async def extract_audio_from_video(
             audio = audio.subclip(0, duration)
 
         # Create a temporary file for the audio
-        with tempfile.NamedTemporaryFile(delete=False, suffix=f".{output_format}") as temp_audio:
+        with tempfile.NamedTemporaryFile(
+            delete=False, suffix=f".{output_format}"
+        ) as temp_audio:
             temp_audio_path = temp_audio.name
 
         # Write audio to file
@@ -97,7 +99,11 @@ async def extract_audio_from_video(
         background_tasks.add_task(os.unlink, temp_audio_path)
 
         # Return the audio file
-        return FileResponse(temp_audio_path, media_type=f"audio/{output_format}", filename=f"extracted_audio.{output_format}")
+        return FileResponse(
+            temp_audio_path,
+            media_type=f"audio/{output_format}",
+            filename=f"extracted_audio.{output_format}",
+        )
 
     except Exception as e:
         # Clean up the temp video file in case of error
