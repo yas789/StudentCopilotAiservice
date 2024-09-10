@@ -104,3 +104,8 @@ async def extract_audio_from_video(
         print(f"Error processing request: {str(e)}")
         os.unlink(temp_video_path)
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
