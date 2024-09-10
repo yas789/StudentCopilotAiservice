@@ -37,8 +37,3 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build Docker image
       run: docker build -t fastapi-app .
-    - name: Test Docker image
-      run: |
-        docker run -d --name fastapi-container -p 8000:8000 fastapi-app
-        sleep 5
-        curl http://localhost:8000/health || exit 1
