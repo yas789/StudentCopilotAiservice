@@ -51,7 +51,7 @@ STATIC_ORIGINAL_PROMPT = "generate notes"
 def read_root():
     return {"Hello": "World"}
 
-@app.post("/generate_notes/")
+@app.post("/generate_notes")
 async def generate_notes():
     # Use static values to generate notes
     res1 = note_generator.generate_note(
